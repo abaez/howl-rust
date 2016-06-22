@@ -8,7 +8,7 @@
 howl.aux.lpeg_lexer ->
   c = capture
   -- shorthand for lexer.word
-  w = (alpha + '_')^1 + (alpha + digit + '_')^0
+  ident = (alpha + '_')^1 * (alpha + digit + '_')^0
 
   -- Whitespace.
   ws = c 'whitespace', space
@@ -34,7 +34,7 @@ howl.aux.lpeg_lexer ->
   }
 
   -- Keywords.
-  keywords = c 'keyword', word {
+  keyword = c 'keyword', word {
     'abstract',   'alignof',    'as',       'become',   'box',
     'break',      'const',      'continue', 'crate',    'do',
     'else',       'enum',       'extern',   'false',    'final',
@@ -52,7 +52,7 @@ howl.aux.lpeg_lexer ->
   library = R'AZ' * (R'az' + digit)^1
 
   -- Lifetimes.
-  lifetime = "'" * alpha
+  lifetime = "'" * ident
 
   -- Primitive Types.
   primitive = word {
@@ -64,7 +64,7 @@ howl.aux.lpeg_lexer ->
   type = c 'type', any {library, lifetime, primitive}
 
   -- Identifiers.
-  identifier = c 'identifier', w
+  identifier = c 'identifer', ident
 
   -- Operators.
   operator = c 'operator', S'+-/*%<>!=`^~@&|?#~:;,.()[]{}'
@@ -73,9 +73,29 @@ howl.aux.lpeg_lexer ->
   attribute = (P'#![' + P'#[') * scan_until(eol + P']')
 
   -- Syntax extensions.
-  extension = w^1 * S'!'
+  extension = ident * S'!'
 
   -- Character.
   char = span("'", "'", '\\')
 
+  preproc = c 'preproc', attribute
+  special = c 'special', any { extension }
+  constant = c 'constant', char
+
+  P {
+    'all'
+
+    all: any {
+      preproc,
+      comment,
+      string,
+      type,
+      keyword,
+      special,
+      operator,
+      number,
+      constant,
+      identifier,
+    }
+  }
 
