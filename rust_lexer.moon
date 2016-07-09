@@ -64,7 +64,7 @@ howl.aux.lpeg_lexer ->
   type = c 'type', any {library, lifetime, primitive}
 
   -- Identifiers.
-  identifier = c 'identifer', ident
+  identifier = c 'identifier', ident
 
   -- Operators.
   operator = c 'operator', S'+-/*%<>!=`^~@&|?#~:;,.()[]{}'
