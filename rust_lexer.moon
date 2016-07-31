@@ -49,7 +49,7 @@ howl.aux.lpeg_lexer ->
   }
 
   -- Library Types.
-  library = R'AZ' * (R'az' + digit)^1
+  library = upper^1 * (lower + digit)^1
 
   -- Lifetimes.
   lifetime = "'" * ident
@@ -70,31 +70,27 @@ howl.aux.lpeg_lexer ->
   operator = c 'operator', S'+-/*%<>!=`^~@&|?#~:;,.()[]{}'
 
   -- Attributes.
-  attribute = (P'#![' + P'#[') * scan_until(eol + P']')
+  attribute = c 'attribute', (P'#![' + P'#[') * scan_until(eol + P']')
 
   -- Syntax extensions.
-  extension = ident * S'!'
+  extension = c 'extension', any {ident * S'!'}
 
   -- Character.
-  char = span("'", "'", '\\')
-
-  preproc = c 'preproc', attribute
-  special = c 'special', any { extension }
-  constant = c 'constant', char
+  char = c 'char', blank^1 * span("'", "'", '\\')
 
   P {
     'all'
 
     all: any {
-      preproc,
+      attribute,
       comment,
       string,
       type,
       keyword,
-      special,
+      extension,
       operator,
+      char,
       number,
-      constant,
       identifier,
     }
   }

@@ -5,9 +5,15 @@
 -- @license MIT (see LICENSE)
 -- @module mode
 
+import style from howl.ui
+
+style.define 'extension', "special"
+style.define 'attribute', "preproc"
+style.define 'char', 'constant'
+
 {
   lexer: bundle_load('rust_lexer')
-  comment_syntax: {'//', '/*', '*/'}
+  comment_syntax: '//'
   auto_pairs: {
     '(': ')'
     '[': ']'
